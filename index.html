@@ -41,7 +41,11 @@
                 </div>
                 <div data-ng-repeat="task in story.tasks">
                     {{addTask(task)}}
-                    <input type="checkbox" ng-disabled="true" ng-model="task.complete"></input>{{task.description}}
+                    <input
+                        type="checkbox"
+                        ng-model="task.complete"
+                        ng-change="task.$saveComplete({project_id: project_id})"/>
+                    {{task.description}}
                 </div>
                 <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
             </li>
