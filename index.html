@@ -1,0 +1,56 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</head>
+
+
+<body ng-app="PivotalApp">
+    <h1>Pivotal Tasks</h1>
+    <div ng-controller="Main" style="display: block;">
+        <label>
+            Project Id
+            <input ng-model="projectId" />
+        </label>
+        <button ng-click="updateProjectId(projectId)">Update</button>
+        </br>
+        <label>
+            Token
+            <input ng-model="token"></input>
+        </label>
+        <button ng-click="updateToken(token)">Update</button>
+        </br>
+        <label>
+            User
+            <select ng-model="member" ng-options="member.person.name for member in members" ng-change="loadWork()"></select>
+        </label>
+        <button ng-click="loadWork()">Load</button>
+        <input type="checkbox" ng-model="tasksOnly">Tasks Only</input>
+        <ul>
+            <li data-ng-repeat="story in stories" style="padding: 10px">
+                <div><i>{{story.id}}</i>
+                </div>
+                <div ng-if="!tasksOnly">
+                    <div>
+                        <b>{{story.name}}</b>
+                    </div>
+                    <div>{{story.description}}</div>
+                </div>
+                <div data-ng-repeat="task in story.tasks">
+                    {{addTask(task)}}
+                    <input type="checkbox" ng-disabled="true" ng-model="task.complete"></input>{{task.description}}
+                </div>
+                <meter min="0" max="{{getTaskTotal(story.tasks)}}" ng-value="getCompletedTaskTotal(story.tasks)"></meter>
+            </li>
+        </ul>
+        <div>
+            Task Totals:
+            <div>
+                <b>{{completedTaskCount}} / {{totalTaskCount}}</b>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
