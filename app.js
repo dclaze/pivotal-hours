@@ -12,52 +12,13 @@ angular.module('PivotalApp').config(['$httpProvider', function($httpProvider) {
     });
 }]);
 
-angular.module('PivotalApp').controller('Main', ['$scope', '$http', '$resource', function($scope, $http, $resource) {
+angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Task', function($scope, $http, Story, Task) {
     $scope.tasksOnly = false;
     var loadMembers = function() {
         $http.get('projects/' + $scope.projectId + '/memberships', {}).success(function(response) {
             $scope.members = response;
         });
     };
-
-    var Story = $resource('projects/:projectId/stories', {}, {
-        query: {
-            isArray: true,
-            transformResponse: function(response) {
-                var stories = JSON.parse(response);
-                stories.forEach(function(story) {
-                    story.tasks = Task.query({projectId: $scope.projectId, storyId: story.id});
-                });
-                return stories;
-            }
-        }
-    });
-
-    Story.prototype.getCompletedTaskTotal = function() {
-        return this.tasks
-            .filter(function(t) {return t.complete;})
-            .map(function(t) {return t.hours || 0;})
-            .reduce(function(a, b) {return a + b;}, 0);
-    };
-
-    Story.prototype.getTaskTotal = function() {
-        return this.tasks
-            .map(function(t) {return t.hours || 0;})
-            .reduce(function(a, b) {return a + b;}, 0);
-    };
-
-    var Task = $resource('projects/:projectId/stories/:storyId/tasks', {}, {
-        query: {
-            isArray: true,
-            transformResponse: function(response) {
-                var tasks = JSON.parse(response);
-                tasks.forEach(function(t) {
-                    t.hours = parseTaskHours(t);
-                });
-                return tasks;
-            }
-        }
-    });
 
     var init = function() {
         $scope.token = localStorage.getItem("token");
@@ -98,14 +59,4 @@ angular.module('PivotalApp').controller('Main', ['$scope', '$http', '$resource',
             .map(function(s) {return s.getTaskTotal(); })
             .reduce(function(a, b) {return a + b;}, 0);
     };
-
-    var parseTaskHours = function(task) {
-        var match = task.description.match(/\[(\s*\d+\s*)\]/);
-        if (match) {
-            var value = match[1].trim();
-            var number = Number.parseInt(value);
-            return isNaN(number) ? null : number;
-        }
-        return null;};
-
 }]);
