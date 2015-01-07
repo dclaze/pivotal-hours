@@ -1,11 +1,11 @@
 angular.module('PivotalApp').factory('Story', ['$resource', 'Task', function($resource, Task) {
-    var Story = $resource('projects/:projectId/stories', {}, {
+    var Story = $resource('projects/:project_id/stories', {}, {
         query: {
             isArray: true,
             transformResponse: function(response) {
                 var stories = JSON.parse(response);
                 stories.forEach(function(story) {
-                    story.tasks = Task.query({projectId: story.project_id, storyId: story.id});
+                    story.tasks = Task.query({project_id: story.project_id, story_id: story.id});
                 });
                 return stories;
             }

@@ -15,16 +15,16 @@ angular.module('PivotalApp').config(['$httpProvider', function($httpProvider) {
 angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Task', function($scope, $http, Story, Task) {
     $scope.tasksOnly = false;
     var loadMembers = function() {
-        $http.get('projects/' + $scope.projectId + '/memberships', {}).success(function(response) {
+        $http.get('projects/' + $scope.project_id + '/memberships', {}).success(function(response) {
             $scope.members = response;
         });
     };
 
     var init = function() {
         $scope.token = localStorage.getItem("token");
-        $scope.projectId = localStorage.getItem("projectId");
+        $scope.project_id = localStorage.getItem("project_id");
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
-        if ($scope.projectId)
+        if ($scope.project_id)
             loadMembers();
     };
     init();
@@ -34,14 +34,14 @@ angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Ta
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
     };
 
-    $scope.updateProjectId = function(projectId) {
-        localStorage.setItem("projectId", projectId);
+    $scope.updateProjectId = function(project_id) {
+        localStorage.setItem("project_id", project_id);
     };
 
     $scope.$watch('member.person.id', function(personId) {
         if(personId)
             $scope.stories = Story.query({
-                projectId: $scope.projectId,
+                project_id: $scope.project_id,
                 filter: "owner:"+$scope.member.person.id
             });
         else

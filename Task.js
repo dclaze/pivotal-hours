@@ -1,5 +1,5 @@
 angular.module('PivotalApp').factory('Task', ['$resource', function($resource) {
-    var Task = $resource('projects/:projectId/stories/:storyId/tasks', {}, {
+    var Task = $resource('projects/:project_id/stories/:story_id/tasks', {}, {
         query: {
             isArray: true,
             transformResponse: function(response) {
