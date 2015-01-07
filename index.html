@@ -24,9 +24,8 @@
         </br>
         <label>
             User
-            <select ng-model="member" ng-options="member.person.name for member in members" ng-change="loadWork()"></select>
+            <select ng-model="member" ng-options="member.person.name for member in members"></select>
         </label>
-        <button ng-click="loadWork()">Load</button>
         <input type="checkbox" ng-model="tasksOnly">Tasks Only</input>
         <ul>
             <li data-ng-repeat="story in stories" style="padding: 10px">
@@ -42,13 +41,13 @@
                     {{addTask(task)}}
                     <input type="checkbox" ng-disabled="true" ng-model="task.complete"></input>{{task.description}}
                 </div>
-                <meter min="0" max="{{getTaskTotal(story.tasks)}}" ng-value="getCompletedTaskTotal(story.tasks)"></meter>
+                <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
             </li>
         </ul>
         <div>
             Task Totals:
             <div>
-                <b>{{completedTaskCount}} / {{totalTaskCount}}</b>
+                <b>{{getSumOfCompletedHours()}} / {{getTotalHours()}}</b>
             </div>
         </div>
     </div>
