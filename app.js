@@ -22,27 +22,31 @@ angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Ta
 
     var init = function() {
         $scope.token = localStorage.getItem("token");
-        $scope.project_id = localStorage.getItem("project_id");
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
-        if ($scope.project_id)
+        $scope.project_id = localStorage.getItem("project_id");
+        if ($scope.token && $scope.project_id)
             loadMembers();
     };
     init();
 
+    $scope.updateProjectId = function(project_id) {
+        localStorage.setItem("project_id", project_id);
+        if ($scope.token && $scope.project_id)
+            loadMembers();
+    };
+
     $scope.updateToken = function(token) {
         localStorage.setItem("token", token);
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
-    };
-
-    $scope.updateProjectId = function(project_id) {
-        localStorage.setItem("project_id", project_id);
+        if ($scope.token && $scope.project_id)
+            loadMembers();
     };
 
     $scope.$watch('member.person.id', function(personId) {
-        if(personId)
+        if (personId)
             $scope.stories = Story.query({
                 project_id: $scope.project_id,
-                filter: "owner:"+$scope.member.person.id
+                filter: "owner:" + $scope.member.person.id
             });
         else
             $scope.stories = [];
@@ -50,13 +54,21 @@ angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Ta
 
     $scope.getSumOfCompletedHours = function() {
         return ($scope.stories || [])
-            .map(function(s) { return s.getCompletedTaskTotal(); })
-            .reduce(function(a, b) {return a + b;}, 0);
+            .map(function(s) {
+                return s.getCompletedTaskTotal();
+            })
+            .reduce(function(a, b) {
+                return a + b;
+            }, 0);
     };
 
     $scope.getTotalHours = function() {
         return ($scope.stories || [])
-            .map(function(s) {return s.getTaskTotal(); })
-            .reduce(function(a, b) {return a + b;}, 0);
+            .map(function(s) {
+                return s.getTaskTotal();
+            })
+            .reduce(function(a, b) {
+                return a + b;
+            }, 0);
     };
 }]);
