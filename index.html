@@ -13,55 +13,54 @@
 <body ng-app="PivotalApp">
     <h1>Pivotal Tasks</h1>
     <div ng-controller="Main" style="display: block;">
-        <label>
-            Project Id
-            <input ng-model="project_id" />
-        </label>
-        <button ng-click="updateProjectId(project_id)">Update</button>
-        <img src="http://www.allimant.org/javadoc/images/htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
-        </br>
-        <label>
-            Token
-            <input ng-model="token"/>
-        </label>
-        <button ng-click="updateToken(token)">Update</button>
-        <img src="http://www.allimant.org/javadoc/images/htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
-        </br>
-        <label>
-            User
-            <select ng-model="member" ng-options="member.person.name for member in members"></select>
-        </label>
-
-        <label>
-            <input type="checkbox" ng-model="tasksOnly" /> Tasks Only
-        </label>
-
-        <ul>
-            <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
-                <div>
-                    <em>{{story.id}}</em>
-                    <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
-                </div>
-                <div ng-if="!tasksOnly">
-                    <div>
-                        <b>{{story.name}}</b>
-                    </div>
-                    <pre style="white-space: pre-wrap">{{story.description}}</pre>
-                </div>
-                <ol style="list-style: none">
-                    <li data-ng-repeat="task in story.tasks">
-                        <label>
-                            <input type="checkbox" ng-model="task.complete" ng-change="task.$saveComplete({project_id: project_id})" /> {{task.description}}
-                        </label>
-                    </li>
-                </ol>
-            </li>
-        </ul>
+        <div class="options">
+            <label>
+                Project Id
+                <input ng-model="project_id" />
+            </label>
+            <button ng-click="updateProjectId(project_id)">Update</button>
+            <img src="htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
+            </br>
+            <label>
+                Token
+                <input ng-model="token" />
+            </label>
+            <button ng-click="updateToken(token)">Update</button>
+            <img src="htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
+            </br>
+            <label>
+                User
+                <select ng-model="member" ng-options="member.person.name for member in members"></select>
+            </label>
+            <label>
+                <input type="checkbox" ng-model="tasksOnly" /> Tasks Only
+            </label>
+        </div>
         <div>
-            Task Totals:
-            <div>
-                <b>{{getSumOfCompletedHours()}} / {{getTotalHours()}}</b>
+            <div class="fraction" ng-if="member">
+                <sup class="top">{{getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
             </div>
+            <ul class="story-list">
+                <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
+                    <div>
+                        <em>{{story.id}}</em>
+                        <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
+                    </div>
+                    <div ng-if="!tasksOnly">
+                        <div>
+                            <b>{{story.name}}</b>
+                        </div>
+                        <pre style="white-space: pre-wrap">{{story.description}}</pre>
+                    </div>
+                    <ol style="list-style: none">
+                        <li data-ng-repeat="task in story.tasks">
+                            <label>
+                                <input type="checkbox" ng-model="task.complete" ng-change="task.$saveComplete({project_id: project_id})" /> {{task.description}}
+                            </label>
+                        </li>
+                    </ol>
+                </li>
+            </ul>
         </div>
     </div>
 </body>

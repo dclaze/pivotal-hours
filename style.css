@@ -1,12 +1,24 @@
-.story {
+.fraction {
+    font-size: 3em;
+}
+.fraction.top {
+    font-size: 55%;
+    vertical-align: 50%;
+}
+.fraction.bottom {
+    font-size: 50%;
+}
+.story-list {
+    margin: 0;
+    list-style: none;
+}
+.story, .options {
     margin: 10px;
     padding: 10px;
 }
-
 .story[data-state=accepted] {
     background-color: #daebcf;
 }
-
 .story[data-state=started] {
     background-color: #f3f3d1;
 }
