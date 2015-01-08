@@ -1,8 +1,11 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
+    <script type="text/javascript" src="//code.angularjs.org/1.3.0/angular-resource.js"></script>
     <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="Task.js"></script>
+    <script type="text/javascript" src="Story.js"></script>
 </head>
 
 
@@ -11,9 +14,9 @@
     <div ng-controller="Main" style="display: block;">
         <label>
             Project Id
-            <input ng-model="projectId" />
+            <input ng-model="project_id" />
         </label>
-        <button ng-click="updateProjectId(projectId)">Update</button>
+        <button ng-click="updateProjectId(project_id)">Update</button>
         <img src="http://www.allimant.org/javadoc/images/htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
         </br>
         <label>
@@ -25,9 +28,8 @@
         </br>
         <label>
             User
-            <select ng-model="member" ng-options="member.person.name for member in members" ng-change="loadWork()"></select>
+            <select ng-model="member" ng-options="member.person.name for member in members"></select>
         </label>
-        <button ng-click="loadWork()">Load</button>
         <input type="checkbox" ng-model="tasksOnly">Tasks Only</input>
         <ul>
             <li data-ng-repeat="story in stories" style="padding: 10px">
@@ -41,15 +43,19 @@
                 </div>
                 <div data-ng-repeat="task in story.tasks">
                     {{addTask(task)}}
-                    <input type="checkbox" ng-disabled="true" ng-model="task.complete"></input>{{task.description}}
+                    <input
+                        type="checkbox"
+                        ng-model="task.complete"
+                        ng-change="task.$saveComplete({project_id: project_id})"/>
+                    {{task.description}}
                 </div>
-                <meter min="0" max="{{getTaskTotal(story.tasks)}}" ng-value="getCompletedTaskTotal(story.tasks)"></meter>
+                <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
             </li>
         </ul>
         <div>
             Task Totals:
             <div>
-                <b>{{completedTaskCount}} / {{totalTaskCount}}</b>
+                <b>{{getSumOfCompletedHours()}} / {{getTotalHours()}}</b>
             </div>
         </div>
     </div>
