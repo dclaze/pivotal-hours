@@ -43,3 +43,6 @@ Temporary Items
 .apdisk
 
 bower_components/
+
+# Vim
+*.swp

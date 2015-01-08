@@ -1,30 +1,30 @@
-angular.module('PivotalApp', []);
+angular.module('PivotalApp', ['ngResource']);
 
 angular.module('PivotalApp').config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push(function() {
         var baseUrl = "https://www.pivotaltracker.com/services/v5/";
         return {
             request: function(request) {
-                request.url = baseUrl + request.url
+                request.url = baseUrl + request.url;
                 return request;
             }
         };
     });
 }]);
 
-angular.module('PivotalApp').controller('Main', ['$scope', '$http', function($scope, $http) {
+angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Task', function($scope, $http, Story, Task) {
     $scope.tasksOnly = false;
     var loadMembers = function() {
-        $http.get('projects/' + $scope.projectId + '/memberships', {}).success(function(response) {
+        $http.get('projects/' + $scope.project_id + '/memberships', {}).success(function(response) {
             $scope.members = response;
         });
     };
 
     var init = function() {
         $scope.token = localStorage.getItem("token");
-        $scope.projectId = localStorage.getItem("projectId");
+        $scope.project_id = localStorage.getItem("project_id");
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
-        if ($scope.projectId)
+        if ($scope.project_id)
             loadMembers();
     };
     init();
@@ -34,80 +34,29 @@ angular.module('PivotalApp').controller('Main', ['$scope', '$http', function($sc
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
     };
 
-    $scope.updateProjectId = function(projectId) {
-        localStorage.setItem("projectId", projectId);
+    $scope.updateProjectId = function(project_id) {
+        localStorage.setItem("project_id", project_id);
     };
 
-    $scope.loadWork = function() {
-        $http.get('projects/' + $scope.projectId + '/stories', {
-            params: {
-                filter: 'owner:' + $scope.member.person.id
-            }
-        }).success(function(response) {
-            $scope.stories = response;
-            $scope.stories.forEach(function(story) {
-                getTasks(story).success(function(tasks) {
-                    story.tasks = tasks.map(function(t) {
-                        t.hours = parseTaskHours(t);
-                        return t;
-                    });
-                });
+    $scope.$watch('member.person.id', function(personId) {
+        if(personId)
+            $scope.stories = Story.query({
+                project_id: $scope.project_id,
+                filter: "owner:"+$scope.member.person.id
             });
-        });
+        else
+            $scope.stories = [];
+    });
+
+    $scope.getSumOfCompletedHours = function() {
+        return ($scope.stories || [])
+            .map(function(s) { return s.getCompletedTaskTotal(); })
+            .reduce(function(a, b) {return a + b;}, 0);
     };
 
-    var getTasks = function(story) {
-        return $http.get('projects/' + $scope.projectId + '/stories/' + story.id + '/tasks');
+    $scope.getTotalHours = function() {
+        return ($scope.stories || [])
+            .map(function(s) {return s.getTaskTotal(); })
+            .reduce(function(a, b) {return a + b;}, 0);
     };
-
-    $scope.$watch('stories', function(stories) {
-        if (!stories)
-            return;
-        var tasks = stories.map(function(story) {
-            return story.tasks;
-        }).filter(function(task) {
-            return typeof(task) != "undefined";
-        });
-        tasks = tasks.reduce(function(a, b) {
-            return a.concat(b);
-        }, []);
-        $scope.completedTaskCount = $scope.getCompletedTaskTotal(tasks);
-        $scope.totalTaskCount = $scope.getTaskTotal(tasks);
-    }, true);
-
-    $scope.getCompletedTaskTotal = function(tasks) {
-        if (!tasks)
-            return;
-
-        return tasks.map(function(t) {
-            return t.complete ? t.hours : 0;
-        }).filter(function(t) {
-            return t != null;
-        }).reduce(function(a, b) {
-            return a + b;
-        }, 0);
-    };
-
-    $scope.getTaskTotal = function(tasks) {
-        if (!tasks)
-            return;
-
-        return tasks.map(function(t) {
-            return t.hours;
-        }).filter(function(t) {
-            return t != null;
-        }).reduce(function(a, b) {
-            return a + b;
-        }, 0);
-    };
-
-    var parseTaskHours = function(task) {
-        var match = task.description.match(/\[(\s*\d+\s*)\]/);
-        if (match) {
-            var value = match[1].trim();
-            var number = Number.parseInt(value);
-            return isNaN(number) ? null : number;
-        }
-        return null;};
-
 }]);
