@@ -6,8 +6,9 @@
     <script type="text/javascript" src="app.js"></script>
     <script type="text/javascript" src="Task.js"></script>
     <script type="text/javascript" src="Story.js"></script>
-</head>
 
+    <link rel="stylesheet" href="style.css"/>
+</head>
 
 <body ng-app="PivotalApp">
     <h1>Pivotal Tasks</h1>
@@ -21,7 +22,7 @@
         </br>
         <label>
             Token
-            <input ng-model="token"></input>
+            <input ng-model="token"/>
         </label>
         <button ng-click="updateToken(token)">Update</button>
         <img src="http://www.allimant.org/javadoc/images/htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
@@ -30,26 +31,34 @@
             User
             <select ng-model="member" ng-options="member.person.name for member in members"></select>
         </label>
-        <input type="checkbox" ng-model="tasksOnly">Tasks Only</input>
+
+        <label>
+            <input type="checkbox" ng-model="tasksOnly"/>
+            Tasks Only
+        </label>
+
         <ul>
-            <li data-ng-repeat="story in stories" style="padding: 10px">
-                <div><i>{{story.id}}</i>
+            <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
+                <div>
+                    <em>{{story.id}}</em>
+                    <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
                 </div>
                 <div ng-if="!tasksOnly">
                     <div>
                         <b>{{story.name}}</b>
                     </div>
-                    <div>{{story.description}}</div>
+                    <pre style="white-space: pre-wrap">{{story.description}}</pre>
                 </div>
-                <div data-ng-repeat="task in story.tasks">
-                    {{addTask(task)}}
-                    <input
-                        type="checkbox"
-                        ng-model="task.complete"
-                        ng-change="task.$saveComplete({project_id: project_id})"/>
-                    {{task.description}}
-                </div>
-                <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
+                <ol style="list-style: none">
+                    <li data-ng-repeat="task in story.tasks">
+                        <label>
+                            <input type="checkbox"
+                                ng-model="task.complete"
+                                ng-change="task.$saveComplete({project_id: project_id})"/>
+                            {{task.description}}
+                        </label>
+                    </li>
+                </ol>
             </li>
         </ul>
         <div>

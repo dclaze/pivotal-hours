@@ -1,0 +1,12 @@
+.story {
+    margin: 10px;
+    padding: 10px;
+}
+
+.story[data-state=accepted] {
+    background-color: #daebcf;
+}
+
+.story[data-state=started] {
+    background-color: #f3f3d1;
+}
