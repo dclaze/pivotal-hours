@@ -25,3 +25,15 @@
 .story[data-state=started] {
     background-color: #f3f3d1;
 }
+
+pre {
+	white-space: pre-wrap;
+}
+
+.comment {
+	background-color: white;
+}
+
+.comment pre {
+	padding: 10px;
+}
