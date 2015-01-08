@@ -1,4 +1,4 @@
-angular.module('PivotalApp').factory('Story', ['$resource', 'Task', function($resource, Task) {
+angular.module('PivotalApp').factory('Story', ['$resource', 'Task', 'Comment', function($resource, Task, Comment) {
     var Story = $resource('projects/:project_id/stories', {}, {
         query: {
             isArray: true,
@@ -6,6 +6,7 @@ angular.module('PivotalApp').factory('Story', ['$resource', 'Task', function($re
                 var stories = JSON.parse(response);
                 stories.forEach(function(story) {
                     story.tasks = Task.query({project_id: story.project_id, story_id: story.id});
+					story.comments = Comment.query({project_id: story.project_id, story_id: story.id});
                 });
                 return stories;
             }
