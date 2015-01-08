@@ -1,55 +1,70 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
+    <script type="text/javascript" src="//code.angularjs.org/1.3.0/angular-resource.js"></script>
     <script type="text/javascript" src="app.js"></script>
-</head>
+    <script type="text/javascript" src="Task.js"></script>
+    <script type="text/javascript" src="Story.js"></script>
 
+    <link rel="stylesheet" href="style.css"/>
+</head>
 
 <body ng-app="PivotalApp">
     <h1>Pivotal Tasks</h1>
     <div ng-controller="Main" style="display: block;">
         <label>
             Project Id
-            <input ng-model="projectId" />
+            <input ng-model="project_id" />
         </label>
-        <button ng-click="updateProjectId(projectId)">Update</button>
+        <button ng-click="updateProjectId(project_id)">Update</button>
         <img src="http://www.allimant.org/javadoc/images/htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
         </br>
         <label>
             Token
-            <input ng-model="token"></input>
+            <input ng-model="token"/>
         </label>
         <button ng-click="updateToken(token)">Update</button>
         <img src="http://www.allimant.org/javadoc/images/htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
         </br>
         <label>
             User
-            <select ng-model="member" ng-options="member.person.name for member in members" ng-change="loadWork()"></select>
+            <select ng-model="member" ng-options="member.person.name for member in members"></select>
         </label>
-        <button ng-click="loadWork()">Load</button>
-        <input type="checkbox" ng-model="tasksOnly">Tasks Only</input>
+
+        <label>
+            <input type="checkbox" ng-model="tasksOnly"/>
+            Tasks Only
+        </label>
+
         <ul>
-            <li data-ng-repeat="story in stories" style="padding: 10px">
-                <div><i>{{story.id}}</i>
+            <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
+                <div>
+                    <em>{{story.id}}</em>
+                    <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
                 </div>
                 <div ng-if="!tasksOnly">
                     <div>
                         <b>{{story.name}}</b>
                     </div>
-                    <div>{{story.description}}</div>
+                    <pre style="white-space: pre-wrap">{{story.description}}</pre>
                 </div>
-                <div data-ng-repeat="task in story.tasks">
-                    {{addTask(task)}}
-                    <input type="checkbox" ng-disabled="true" ng-model="task.complete"></input>{{task.description}}
-                </div>
-                <meter min="0" max="{{getTaskTotal(story.tasks)}}" ng-value="getCompletedTaskTotal(story.tasks)"></meter>
+                <ol style="list-style: none">
+                    <li data-ng-repeat="task in story.tasks">
+                        <label>
+                            <input type="checkbox"
+                                ng-model="task.complete"
+                                ng-change="task.$saveComplete({project_id: project_id})"/>
+                            {{task.description}}
+                        </label>
+                    </li>
+                </ol>
             </li>
         </ul>
         <div>
             Task Totals:
             <div>
-                <b>{{completedTaskCount}} / {{totalTaskCount}}</b>
+                <b>{{getSumOfCompletedHours()}} / {{getTotalHours()}}</b>
             </div>
         </div>
     </div>
