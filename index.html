@@ -60,7 +60,7 @@
                             </label>
                         </li>
                     </ol>
-                    <details data-ng-if="story.comments.length">
+                    <details data-ng-if="!tasksOnly && story.comments.length">
                             <summary>{{story.comments.length}} comments</summary>
                             <ol style="list-style: none">
                                     <li class="comment" data-ng-repeat="comment in story.comments">
