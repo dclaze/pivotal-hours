@@ -45,7 +45,7 @@
                 <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
                     <div>
                         <em>{{story.id}}</em>
-                        <progress min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
+                        <progress data-ng-if="story.getTaskTotal()" min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
                     </div>
                     <div ng-if="!tasksOnly">
                         <div>
@@ -60,7 +60,7 @@
                             </label>
                         </li>
                     </ol>
-                    <details data-ng-if="story.comments.length">
+                    <details data-ng-if="!tasksOnly && story.comments.length">
                             <summary>{{story.comments.length}} comments</summary>
                             <ol style="list-style: none">
                                     <li class="comment" data-ng-repeat="comment in story.comments">
