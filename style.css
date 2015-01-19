@@ -19,11 +19,20 @@
 .story {
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.25);
 }
-.story[data-state=accepted] {
-    background-color: #daebcf;
-}
 .story[data-state=started] {
-    background-color: #f3f3d1;
+    background-color: rgba(224, 226, 229, 1);
+}
+.story[data-state=finished] {
+    background-color: rgba(32, 62, 100, 0.2);
+}
+.story[data-state=delivered] {
+    background-color: rgba(243, 147, 0, 0.2);
+}
+.story[data-state=accepted] {
+    background-color: rgba(98, 146, 0, 0.2);
+}
+.story[data-state=rejected] {
+    background-color: rgba(167, 31, 57, 0.2);
 }
 
 pre {
