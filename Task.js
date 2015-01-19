@@ -33,12 +33,16 @@ angular.module('PivotalApp').factory('Task', ['$resource', function($resource) {
     }
 
     function parseHours(task) {
-        var match = task.description.match(/\[(\s*\d+\s*)\]/);
-        if (match) {
-            var value = match[1].trim();
-            var number = Number.parseInt(value);
-            return isNaN(number) ? null : number;
+        var re = /\[(.*?)\]/g;
+
+        var match;
+
+        while(match = re.exec(task.description)) {
+            var number = parseInt(match[1]);
+            if(!isNaN(number))
+                return number;
         }
+
         return null;
     }
 
