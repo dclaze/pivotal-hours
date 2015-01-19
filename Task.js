@@ -38,7 +38,7 @@ angular.module('PivotalApp').factory('Task', ['$resource', function($resource) {
         var match;
 
         while(match = re.exec(task.description)) {
-            var number = parseInt(match[1]);
+            var number = parseFloat(match[1]);
             if(!isNaN(number))
                 return number;
         }
