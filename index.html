@@ -15,24 +15,26 @@
     <h1>Pivotal Tasks</h1>
     <div ng-controller="Main" style="display: block;">
         <div class="options">
-            <label>
-                Project Id
-                <input ng-model="project_id" />
-            </label>
-            <button ng-click="updateProjectId(project_id)">Update</button>
-            <img src="htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
-            </br>
-            <label>
-                Token
-                <input ng-model="token" />
-            </label>
-            <button ng-click="updateToken(token)">Update</button>
-            <img src="htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
-            </br>
-            <label>
-                User
-                <select ng-model="member" ng-options="member.person.name for member in members"></select>
-            </label>
+            <div>
+                <label>
+                    Token
+                    <input ng-model="token" ng-model-options="{ updateOn: 'blur' }"/>
+                </label>
+                <img src="htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
+            </div>
+            <div>
+                <label>
+                    Project
+                    <select ng-model="project_id" ng-options="project.id as project.name for project in projects"></select>
+                </label>
+                <img src="htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
+            </div>
+            <div>
+                <label>
+                    User
+                    <select ng-model="member" ng-options="member.person.name for member in members"></select>
+                </label>
+            </div>
             <label>
                 <input type="checkbox" ng-model="tasksOnly" /> Tasks Only
             </label>

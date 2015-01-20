@@ -14,33 +14,71 @@ angular.module('PivotalApp').config(['$httpProvider', function($httpProvider) {
 
 angular.module('PivotalApp').controller('Main', ['$scope', '$http', 'Story', 'Task', function($scope, $http, Story, Task) {
     $scope.tasksOnly = false;
-    var loadMembers = function() {
+
+    function loadMembers() {
         $http.get('projects/' + $scope.project_id + '/memberships', {}).success(function(response) {
             $scope.members = response;
         });
-    };
+    }
+
+    function loadProjects() {
+        $http.get('projects').success(function(projects) {
+            $scope.projects = projects;
+            if(!$scope.project_id)
+                $scope.project_id = projects[0].id;
+        });
+    }
+
+    function loadMe() {
+        $http.get('me').success(function(response) {
+            $scope.me = response;
+        });
+    }
 
     var init = function() {
         $scope.token = localStorage.getItem("token");
-        $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
         $scope.project_id = localStorage.getItem("project_id");
-        if ($scope.token && $scope.project_id)
-            loadMembers();
     };
+
     init();
 
-    $scope.updateProjectId = function(project_id) {
-        localStorage.setItem("project_id", project_id);
-        if ($scope.token && $scope.project_id)
-            loadMembers();
-    };
+    $scope.$watch('project_id', function(project_id) {
+        if(project_id)
+            localStorage.setItem("project_id", project_id);
+        else
+            localStorage.removeItem("project_id");
+    });
 
-    $scope.updateToken = function(token) {
-        localStorage.setItem("token", token);
+    $scope.$watch('token', function(token) {
         $http.defaults.headers.common["X-TrackerToken"] = $scope.token;
-        if ($scope.token && $scope.project_id)
+
+        if(token) {
+            localStorage.setItem("token", token);
+            loadProjects();
+            loadMe();
+        }
+        else
+            localStorage.removeItem("token", token);
+    });
+
+    $scope.$watchGroup(['token', 'project_id'], function(stuff) {
+        if(stuff[0] && stuff[1])
             loadMembers();
-    };
+    });
+
+    $scope.$watchGroup(['members', 'me'], function(membersAndMe) {
+        var members = membersAndMe[0];
+        var me = membersAndMe[1];
+
+        if(me && members) {
+            var match = members.filter(function(member) {
+                return member.person.id == me.id;
+            })[0];
+
+            if(match)
+                $scope.member = match;
+        }
+    });
 
     $scope.$watch('member.person.id', function(personId) {
         if (personId)
