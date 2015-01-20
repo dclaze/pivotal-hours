@@ -15,37 +15,52 @@
     <h1>Pivotal Tasks</h1>
     <div ng-controller="Main" style="display: block;">
         <div class="options">
-            <label>
-                Project Id
-                <input ng-model="project_id" />
-            </label>
-            <button ng-click="updateProjectId(project_id)">Update</button>
-            <img src="htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
-            </br>
-            <label>
-                Token
-                <input ng-model="token" />
-            </label>
-            <button ng-click="updateToken(token)">Update</button>
-            <img src="htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
-            </br>
-            <label>
-                User
-                <select ng-model="member" ng-options="member.person.name for member in members"></select>
-            </label>
+            <div>
+                <label>
+                    Token
+                    <input ng-model="token" ng-model-options="{ updateOn: 'blur' }"/>
+                </label>
+                <img src="htmlhelp-icon.gif" title="The Token appears at the bottom of your profile page https://www.pivotaltracker.com/profile"></img>
+            </div>
+            <div>
+                <label>
+                    Project
+                    <select ng-model="project_id" ng-options="project.id as project.name for project in projects"></select>
+                </label>
+                <img src="htmlhelp-icon.gif" title="The Project Id appears in the project url https://www.pivotaltracker.com/n/projects/<ProjectId>"></img>
+            </div>
+            <div>
+                <label>
+                    User
+                    <select ng-model="member" ng-options="member.person.name for member in members"></select>
+                </label>
+            </div>
             <label>
                 <input type="checkbox" ng-model="tasksOnly" /> Tasks Only
             </label>
         </div>
         <div>
-            <div class="fraction" ng-if="member">
-                <sup class="top">{{getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
-            </div>
+            <label ng-if="member">
+                <input type="checkbox" ng-model="showRemaining" style="display: none;"/>
+                <span ng-if="!showRemaining">
+                    <span class="fraction">
+                        <sup class="top">{{getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
+                    </span>
+                    Completed
+                </span>
+                <span ng-if="showRemaining">
+                    <span class="fraction">
+                        <sup class="top">{{getTotalHours() - getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
+                    </span>
+                    Remaining
+                </span>
+            </label>
             <ul class="story-list">
                 <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
                     <div>
                         <em>{{story.id}}</em>
                         <progress data-ng-if="story.getTaskTotal()" min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
+                        <sup class="top">{{story.getCompletedTaskTotal()}}</sup>&frasl;<sub class="bottom">{{story.getTaskTotal()}}</sub>
                     </div>
                     <div ng-if="!tasksOnly">
                         <div>
@@ -61,12 +76,12 @@
                         </li>
                     </ol>
                     <details data-ng-if="!tasksOnly && story.comments.length">
-                            <summary>{{story.comments.length}} comments</summary>
-                            <ol style="list-style: none">
-                                    <li class="comment" data-ng-repeat="comment in story.comments">
-                                            <pre>{{comment.text}}</pre>
-                                    </li>
-                            </ol>
+                        <summary>{{story.comments.length}} comments</summary>
+                        <ol style="list-style: none">
+                            <li class="comment" data-ng-repeat="comment in story.comments">
+                                <pre>{{comment.text}}</pre>
+                            </li>
+                        </ol>
                     </details>
                 </li>
             </ul>
