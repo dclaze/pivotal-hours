@@ -40,12 +40,21 @@
             </label>
         </div>
         <div>
-            <div class="fraction" ng-if="member">
-                <sup class="top">{{getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
-                <span style="opacity: 0.1;">
-                    {{getTotalHours() - getSumOfCompletedHours()}}
+            <label ng-if="member">
+                <input type="checkbox" ng-model="showRemaining" style="display: none;"/>
+                <span ng-if="!showRemaining">
+                    <span class="fraction">
+                        <sup class="top">{{getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
+                    </span>
+                    Completed
                 </span>
-            </div>
+                <span ng-if="showRemaining">
+                    <span class="fraction">
+                        <sup class="top">{{getTotalHours() - getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
+                    </span>
+                    Remaining
+                </span>
+            </label>
             <ul class="story-list">
                 <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
                     <div>
