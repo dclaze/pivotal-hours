@@ -42,6 +42,9 @@
         <div>
             <div class="fraction" ng-if="member">
                 <sup class="top">{{getSumOfCompletedHours()}}</sup>&frasl;<sub class="bottom">{{getTotalHours()}}</sub>
+                <span style="opacity: 0.1;">
+                    {{getTotalHours() - getSumOfCompletedHours()}}
+                </span>
             </div>
             <ul class="story-list">
                 <li data-ng-repeat="story in stories" data-state="{{story.current_state}}" class="story">
@@ -63,12 +66,12 @@
                         </li>
                     </ol>
                     <details data-ng-if="!tasksOnly && story.comments.length">
-                            <summary>{{story.comments.length}} comments</summary>
-                            <ol style="list-style: none">
-                                    <li class="comment" data-ng-repeat="comment in story.comments">
-                                            <pre>{{comment.text}}</pre>
-                                    </li>
-                            </ol>
+                        <summary>{{story.comments.length}} comments</summary>
+                        <ol style="list-style: none">
+                            <li class="comment" data-ng-repeat="comment in story.comments">
+                                <pre>{{comment.text}}</pre>
+                            </li>
+                        </ol>
                     </details>
                 </li>
             </ul>
