@@ -60,7 +60,7 @@
                     <div>
                         <em>{{story.id}}</em>
                         <progress data-ng-if="story.getTaskTotal()" min="0" max="{{story.getTaskTotal()}}" value="{{story.getCompletedTaskTotal()}}"></progress>
-                        <sup class="top">{{story.getCompletedTaskTotal()}}</sup>&frasl;<sub class="bottom">{{story.getTaskTotal()}}</sub>
+                        <span data-ng-if="story.getTaskTotal()"><sup class="top">{{story.getCompletedTaskTotal()}}</sup>&frasl;<sub class="bottom">{{story.getTaskTotal()}}</sub></span>
                     </div>
                     <div ng-if="!tasksOnly">
                         <div>
